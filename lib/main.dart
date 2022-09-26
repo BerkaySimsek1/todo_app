@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/firebase_methods/firebaseMethods.dart';
 import 'package:todo_app/screens/mainScreen.dart';
+import 'package:todo_app/screens/signinScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +20,26 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const mainScreen(),
+      home: StreamBuilder(
+        stream: Auth().authStateChanges,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return mainScreen();
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            );
+          }
+          return signInScreen();
+        },
+      ),
     );
   }
 }
