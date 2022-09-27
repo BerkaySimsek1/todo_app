@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/firebase_methods/firebaseMethods.dart';
+import 'package:todo_app/screens/addTaskScreen.dart';
 import 'package:todo_app/screens/signinScreen.dart';
 
 class mainScreen extends StatefulWidget {
@@ -31,42 +33,72 @@ class _mainScreenState extends State<mainScreen> {
         MaterialPageRoute(
           builder: (context) => signInScreen(),
         ));
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            TextButton(onPressed: () {}, child: Text("Important")),
-            TextButton(
-                onPressed: () {
-                  logOut();
-                },
-                child: Text("Log out")),
-          ],
-        ),
-        body: ListTile(
-          leading: Checkbox(
-            value: isChecked,
-            onChanged: (value) {
-              checkControl(value!);
-            },
-          ),
-          title: Text(
-            "Ders çalış",
-            style: TextStyle(
-                decoration: isChecked
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none),
-          ),
-          trailing: GestureDetector(
-              onTap: () => impControl(),
-              child: Icon(
-                Icons.label_important,
-                color: isImp ? Colors.red : Colors.grey[350],
-              )),
-        ));
+      appBar: AppBar(
+        actions: [
+          TextButton(onPressed: () {}, child: Text("Important")),
+          TextButton(
+              onPressed: () {
+                logOut();
+              },
+              child: Text("Log out")),
+        ],
+      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection("task")
+            .doc(Auth().currentuser!.uid)
+            .collection("task")
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView(
+                children: snapshot.data!.docs.map(
+              (task) {
+                return ListTile(
+                  leading: Checkbox(
+                    value: isChecked,
+                    onChanged: (value) {
+                      checkControl(value!);
+                    },
+                  ),
+                  title: Text(
+                    task["task"],
+                    style: TextStyle(
+                        decoration: isChecked
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none),
+                  ),
+                  trailing: GestureDetector(
+                      onTap: () => impControl(),
+                      child: Icon(
+                        Icons.label_important,
+                        color: isImp ? Colors.red : Colors.grey[350],
+                      )),
+                );
+              },
+            ).toList());
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddtaskScreen(),
+              ));
+        },
+        child: Icon(Icons.add),
+      ),
+    );
   }
 }

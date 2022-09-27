@@ -2,12 +2,18 @@
 import 'dart:convert';
 
 class Task {
-  final String task;
-  final String email;
-  final String uid;
+  final dynamic task;
+  final dynamic description;
+
   Task({
     required this.task,
-    required this.email,
-    required this.uid,
+    required this.description,
   });
+
+  dynamic getDataMap() {
+    return {
+      "task": task,
+      "description": description,
+    };
+  }
 }

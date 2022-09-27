@@ -31,30 +31,16 @@ class _signScreenState extends State<signInScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 1.25,
-              child: TextField(
-                controller: tfemail,
-                decoration: const InputDecoration(
-                  hintText: "E-mail",
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-            ),
+            customTextField(
+                textEditingController: tfemail,
+                keyboardtype: TextInputType.emailAddress,
+                text: "E-mail"),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width / 1.25,
-                child: TextField(
-                  controller: tfpassword,
-                  decoration: const InputDecoration(
-                    hintText: "Password",
-                  ),
-                  keyboardType: TextInputType.text,
-                  obscureText: true,
-                ),
-              ),
-            ),
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: customTextField(
+                    textEditingController: tfpassword,
+                    keyboardtype: TextInputType.text,
+                    text: "Password")),
             SizedBox(
                 width: MediaQuery.of(context).size.width / 1.40,
                 child: ElevatedButton(
@@ -79,6 +65,33 @@ class _signScreenState extends State<signInScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class customTextField extends StatelessWidget {
+  customTextField(
+      {Key? key,
+      required this.textEditingController,
+      required this.keyboardtype,
+      required this.text})
+      : super(key: key);
+
+  TextEditingController textEditingController;
+  String text;
+  TextInputType keyboardtype;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 1.25,
+      child: TextField(
+        controller: textEditingController,
+        decoration: InputDecoration(
+          hintText: text,
+        ),
+        keyboardType: keyboardtype,
       ),
     );
   }
