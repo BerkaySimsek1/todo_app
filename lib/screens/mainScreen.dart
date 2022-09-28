@@ -1,29 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/firebase_methods/firebaseMethods.dart';
+import 'package:todo_app/firebase_methods/firestoreMethods.dart';
 import 'package:todo_app/screens/addTaskScreen.dart';
+import 'package:todo_app/screens/importanceScreen.dart';
 import 'package:todo_app/screens/signinScreen.dart';
 
 class mainScreen extends StatefulWidget {
-  const mainScreen({super.key});
+  mainScreen({super.key, required this.isImp});
+  bool isImp;
 
   @override
   State<mainScreen> createState() => _mainScreenState();
 }
 
 class _mainScreenState extends State<mainScreen> {
-  bool isChecked = false;
-  bool isImp = false;
-  void checkControl(bool value) {
-    setState(() {
-      isChecked = value;
-    });
-  }
-
-  void impControl() {
-    setState(() {
-      isImp = !isImp;
-    });
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   Future<void> logOut() async {
@@ -40,7 +36,15 @@ class _mainScreenState extends State<mainScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          TextButton(onPressed: () {}, child: Text("Important")),
+          TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => importanceScreen(),
+                    ));
+              },
+              child: Text("Important")),
           TextButton(
               onPressed: () {
                 logOut();
@@ -59,31 +63,17 @@ class _mainScreenState extends State<mainScreen> {
             return ListView(
                 children: snapshot.data!.docs.map(
               (task) {
-                return ListTile(
-                  leading: Checkbox(
-                    value: isChecked,
-                    onChanged: (value) {
-                      checkControl(value!);
-                    },
-                  ),
-                  title: Text(
-                    task["task"],
-                    style: TextStyle(
-                        decoration: isChecked
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none),
-                  ),
-                  trailing: GestureDetector(
-                      onTap: () => impControl(),
-                      child: Icon(
-                        Icons.label_important,
-                        color: isImp ? Colors.red : Colors.grey[350],
-                      )),
+                return customListTile(
+                  path: task.id.toString(),
+                  text: task["task"],
+                  isChecked: task["deneme"],
+                  desc: task["description"],
+                  isImp: widget.isImp,
                 );
               },
             ).toList());
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -99,6 +89,63 @@ class _mainScreenState extends State<mainScreen> {
         },
         child: Icon(Icons.add),
       ),
+    );
+  }
+}
+
+class customListTile extends StatefulWidget {
+  customListTile({
+    Key? key,
+    required this.text,
+    required this.isChecked,
+    required this.path,
+    required this.desc,
+    required this.isImp,
+  }) : super(key: key);
+  String text;
+  bool isChecked, isImp;
+  String path, desc;
+  @override
+  State<customListTile> createState() => _customListTileState();
+}
+
+class _customListTileState extends State<customListTile> {
+  @override
+  Widget build(BuildContext context) {
+    void deneme1(bool value, String path) {
+      setState(() {
+        firestoreMethods().updatee(value, path);
+      });
+    }
+
+    return ListTile(
+      leading: Checkbox(
+        value: widget.isChecked,
+        onChanged: (value) {
+          deneme1(value!, widget.path);
+        },
+      ),
+      title: Text(
+        widget.text,
+        style: TextStyle(
+            decoration: widget.isChecked
+                ? TextDecoration.lineThrough
+                : TextDecoration.none),
+      ),
+      trailing: GestureDetector(
+          onTap: () {
+            setState(() {
+              widget.isImp = !widget.isImp;
+            });
+            widget.isImp
+                ? firestoreMethods().valideAndSubmitImportance(
+                    widget.text, widget.desc, widget.path)
+                : firestoreMethods().delete(widget.path);
+          },
+          child: Icon(
+            Icons.label_important,
+            color: widget.isImp ? Colors.red : Colors.grey[350],
+          )),
     );
   }
 }
