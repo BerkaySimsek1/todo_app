@@ -24,7 +24,9 @@ class MyApp extends StatelessWidget {
         stream: Auth().authStateChanges,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return mainScreen();
+            return mainScreen(
+              isImp: false,
+            );
           } else if (snapshot.hasError) {
             return Center(
               child: Text(snapshot.error.toString()),

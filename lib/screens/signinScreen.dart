@@ -19,7 +19,9 @@ class _signScreenState extends State<signInScreen> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => mainScreen(),
+          builder: (context) => mainScreen(
+            isImp: false,
+          ),
         ));
     setState(() {});
   }
@@ -32,15 +34,19 @@ class _signScreenState extends State<signInScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             customTextField(
-                textEditingController: tfemail,
-                keyboardtype: TextInputType.emailAddress,
-                text: "E-mail"),
+              textEditingController: tfemail,
+              keyboardtype: TextInputType.emailAddress,
+              text: "E-mail",
+              isPassword: false,
+            ),
             Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
                 child: customTextField(
-                    textEditingController: tfpassword,
-                    keyboardtype: TextInputType.text,
-                    text: "Password")),
+                  textEditingController: tfpassword,
+                  keyboardtype: TextInputType.text,
+                  text: "Password",
+                  isPassword: true,
+                )),
             SizedBox(
                 width: MediaQuery.of(context).size.width / 1.40,
                 child: ElevatedButton(
@@ -75,9 +81,11 @@ class customTextField extends StatelessWidget {
       {Key? key,
       required this.textEditingController,
       required this.keyboardtype,
-      required this.text})
+      required this.text,
+      required this.isPassword})
       : super(key: key);
 
+  bool isPassword;
   TextEditingController textEditingController;
   String text;
   TextInputType keyboardtype;
@@ -92,6 +100,7 @@ class customTextField extends StatelessWidget {
           hintText: text,
         ),
         keyboardType: keyboardtype,
+        obscureText: isPassword,
       ),
     );
   }

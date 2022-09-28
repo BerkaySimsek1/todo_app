@@ -22,13 +22,17 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             customTextField(
-                textEditingController: tfTask,
-                keyboardtype: TextInputType.text,
-                text: "Task"),
+              textEditingController: tfTask,
+              keyboardtype: TextInputType.text,
+              text: "Task",
+              isPassword: false,
+            ),
             customTextField(
-                textEditingController: tfSubtitle,
-                keyboardtype: TextInputType.text,
-                text: "Description"),
+              textEditingController: tfSubtitle,
+              keyboardtype: TextInputType.text,
+              text: "Description",
+              isPassword: false,
+            ),
             SizedBox(
                 width: MediaQuery.of(context).size.width / 1.40,
                 child: ElevatedButton(
@@ -39,7 +43,9 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => mainScreen(),
+                              builder: (context) => mainScreen(
+                                isImp: false,
+                              ),
                             ));
                       });
                     },

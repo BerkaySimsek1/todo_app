@@ -4,16 +4,15 @@ import 'dart:convert';
 class Task {
   final dynamic task;
   final dynamic description;
+  bool deneme;
 
-  Task({
-    required this.task,
-    required this.description,
-  });
+  Task({required this.task, required this.description, required this.deneme});
 
   dynamic getDataMap() {
     return {
       "task": task,
       "description": description,
+      "deneme": deneme,
     };
   }
 }
