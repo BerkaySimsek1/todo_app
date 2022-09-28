@@ -1,6 +1,6 @@
 # todo_app
 
-A new Flutter project.
+I made this project because i'm new in flutter and i want to improve my firebase skills.
 
 ## Getting Started
 
